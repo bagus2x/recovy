@@ -6,7 +6,7 @@
     },
     "servers": [
         {
-            "url": "https://recovy.herokupapp.com/api/v1"
+            "url": "https://recovy.herokuapp.com/api/v1"
         }
     ],
     "paths": {
