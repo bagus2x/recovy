@@ -93,7 +93,7 @@ func (c *Config) RefreshTokenLifetime() int {
 
 func (c *Config) DatabaseConnection() string {
 	return fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
 		c.dbHost, c.dbPort, c.dbUser, c.dbPassword, c.dbName,
 	)
 }
