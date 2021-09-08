@@ -19,7 +19,7 @@ create_migration:
 	migrate create -ext sql -dir db/migration -seq $(name)
 
 migrate:
-	migrate -source file://db/migration -database postgres://amhdrsmvnfhpxf:ed200a2dfe9c307701c77ddfcdb5c354ceb4e19f31ce350004c5be0917b84a7c@ec2-34-196-238-94.compute-1.amazonaws.com:5432/d3veunub58s339 $(t)
+	migrate -source file://db/migration -database ${POSTGRES_URI} $(t)
 
 force:
 	migrate -path db/migration -database ${POSTGRES_URI} force $(v)
