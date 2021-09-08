@@ -12,6 +12,7 @@ type Config struct {
 	accessTokenLifetime  string
 	refreshTokenKey      string
 	refreshTokenLifetime string
+	cacheSize            string
 	dbHost               string
 	dbPort               string
 	dbName               string
@@ -21,9 +22,10 @@ type Config struct {
 
 func New() *Config {
 	return &Config{
-		appPort:              mustGetEnv("APP_PORT"),
+		appPort:              mustGetEnv("PORT"),
 		accessTokenKey:       mustGetEnv("ACCESS_TOKEN_KEY"),
 		accessTokenLifetime:  mustGetEnv("ACCESS_TOKEN_LIFETIME"),
+		cacheSize:            mustGetEnv("CACHE_SIZE"),
 		refreshTokenKey:      mustGetEnv("REFRESH_TOKEN_KEY"),
 		refreshTokenLifetime: mustGetEnv("REFRESH_TOKEN_LIFETIME"),
 		dbHost:               mustGetEnv("DB_HOST"),
@@ -35,7 +37,7 @@ func New() *Config {
 }
 
 func NewTest() *Config {
-	os.Setenv("APP_PORT", "8080")
+	os.Setenv("PORT", "8080")
 	os.Setenv("ACCESS_TOKEN_KEY", "test")
 	os.Setenv("ACCESS_TOKEN_LIFETIME", "1200")
 	os.Setenv("REFRESH_TOKEN_KEY", "test")
@@ -45,6 +47,7 @@ func NewTest() *Config {
 	os.Setenv("DB_NAME", "recovy")
 	os.Setenv("DB_USERNAME", "postgres")
 	os.Setenv("DB_PASSWORD", "admin123")
+	os.Setenv("CACHE_SIZE", "1") // MB
 
 	return New()
 }
@@ -61,6 +64,15 @@ func (c *Config) AccessTokenLifetime() int {
 	res, err := strconv.Atoi(c.accessTokenLifetime)
 	if err != nil {
 		panic("Access token lifetime must be filled with a number greater than 0")
+	}
+
+	return res
+}
+
+func (c *Config) CacheSize() int {
+	res, err := strconv.Atoi(c.cacheSize)
+	if err != nil {
+		panic("Cache-size must be filled with a number greater than 0")
 	}
 
 	return res

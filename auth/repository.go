@@ -71,7 +71,7 @@ func (r *repository) FindByID(ctx context.Context, userID int64) (models.User, e
 	return user, nil
 }
 
-var FindByEmail = `
+var findByEmail = `
 	SELECT
 		id, name, email, picture, password, created_at, updated_at, deleted_at
 	FROM
@@ -83,9 +83,9 @@ var FindByEmail = `
 func (r *repository) FindByEmail(ctx context.Context, email string) (models.User, error) {
 	var user models.User
 
-	err := r.db.GetContext(ctx, &user, FindByEmail, email)
+	err := r.db.GetContext(ctx, &user, findByEmail, email)
 	if err != nil && err == sql.ErrNoRows {
-		return models.User{}, app.ErrNotFound
+		return models.User{}, app.NewError(err, app.ENotFound)
 	} else if err != nil {
 		return models.User{}, err
 	}
