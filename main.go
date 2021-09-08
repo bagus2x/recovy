@@ -40,5 +40,5 @@ func main() {
 
 	routes.AuthRoutes(app, mw, authService)
 
-	app.Listen(":8080")
+	app.Listen(cfg.AppPort())
 }
