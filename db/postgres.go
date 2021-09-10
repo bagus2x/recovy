@@ -1,13 +1,14 @@
 package db
 
 import (
+	"database/sql"
+
 	"github.com/bagus2x/recovy/config"
-	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
-func OpenPostgres(cfg *config.Config) (*sqlx.DB, error) {
-	db, err := sqlx.Connect("postgres", cfg.DatabaseConnection())
+func OpenPostgres(cfg *config.Config) (*sql.DB, error) {
+	db, err := sql.Open("postgres", cfg.DatabaseConnection())
 	if err != nil {
 		return nil, err
 	}
