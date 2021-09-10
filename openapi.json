@@ -12,7 +12,9 @@
     "paths": {
         "/auth": {
             "get": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Ambil user yanga terauthentikasi",
                 "parameters": [
                     {
@@ -115,7 +117,9 @@
         },
         "/auth/signup": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Buat user baru",
                 "requestBody": {
                     "required": true,
@@ -250,7 +254,9 @@
         },
         "/auth/signin": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Sign in user yang terdaftar",
                 "requestBody": {
                     "required": true,
@@ -380,7 +386,9 @@
         },
         "/auth/signout": {
             "delete": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "parameters": [
                     {
                         "in": "header",
@@ -460,7 +468,9 @@
         },
         "/auth/refresh": {
             "post": {
-                "tags": ["Auth"],
+                "tags": [
+                    "Auth"
+                ],
                 "summary": "Refresh token yang akan expired",
                 "requestBody": {
                     "required": true,
@@ -552,6 +562,379 @@
                                             "items": {
                                                 "type": "string"
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/podcasts": {
+            "get": {
+                "tags": ["Podcast"],
+                "summary": "Get semua data dengan menggunakan cursor based pagination",
+                "description": "Gunakan 'limit' pada header untuk mengatur jumlah item dari setiap halaman. dan gunakan 'cursor' pada header untuk berpindah halaman. Semua query string adalah opsional. kecuali jika menyertakan direction=previous maka cursor='cursor.previous' juga harus disertakan; 'cursor.previous' tersebut didapat dari response sebelumnya",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "Authorization",
+                        "required": false,
+                        "description": "Tidak wajib. namun jika ingin mendaptakn starred yang bernilai true maka header yang valid wajib disertakan",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "description": "cursor berguna untuk menunjuk page selanjutnya atau sebelumnya",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "default": "default valuenya adalah max int32 (2147483647)"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "description": "gunakan limit untuk membatasi maximum item",
+                        "in": "query",
+                        "schema": {
+                            "type": "number",
+                            "minimum": 0,
+                            "default": "Default value adalah 10 items"
+                        }
+                    },
+                    {
+                        "name": "direction",
+                        "description": "Wajib digunakan di url jika direction=previous",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "previous",
+                                "next"
+                            ],
+                            "default": "next"
+                        }
+                    },
+                    {
+                        "name": "author_id",
+                        "description": "Opsional. filter berdasar author_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "number",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "description": "Opsional. filter berdasar title. bisa menggunakan wildcard seperti: %title%",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "starred akan selalu bernilai false jika user belumm terauthetikasi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "minLength": 1
+                                                    },
+                                                    "author": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "number"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "picture": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    },
+                                                    "picture": {
+                                                        "type": "string"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "file": {
+                                                        "type": "string"
+                                                    },
+                                                    "starred": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "createdAt": {
+                                                        "type": "number"
+                                                    },
+                                                    "updatedAt": {
+                                                        "type": "number"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Podcast"],
+                "summary": "Buat podcast baru",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "picture": {
+                                        "type": "string",
+                                        "maximum": 512
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "required": true,
+                                        "maximum": 128
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "file": {
+                                        "type": "string",
+                                        "required": true,
+                                        "maximum": 128
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "starred akan selalu bernilai false",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "minLength": 1
+                                                },
+                                                "author": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "number"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "picture": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "picture": {
+                                                    "type": "string"
+                                                },
+                                                "title": {
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "type": "string"
+                                                },
+                                                "file": {
+                                                    "type": "string"
+                                                },
+                                                "starred": {
+                                                    "type": "boolean",
+                                                    "default": false
+                                                },
+                                                "createdAt": {
+                                                    "type": "number"
+                                                },
+                                                "updatedAt": {
+                                                    "type": "number"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/podcasts/{podcastID}": {
+            "summary": "get berdasar podcastID",
+            "get": {
+                "tags": ["Podcast"],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "podcastID",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "name": "Authorization",
+                        "required": false,
+                        "description": "Tidak wajib. namun jika ingin mendaptakn starred yang bernilai true maka header yang valid wajib disertakan",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "starred akan selalu bernilai false jika user belumm terauthetikasi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "minLength": 1
+                                                },
+                                                "author": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "number"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "picture": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "picture": {
+                                                    "type": "string"
+                                                },
+                                                "title": {
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "type": "string"
+                                                },
+                                                "file": {
+                                                    "type": "string"
+                                                },
+                                                "starred": {
+                                                    "type": "boolean"
+                                                },
+                                                "createdAt": {
+                                                    "type": "number"
+                                                },
+                                                "updatedAt": {
+                                                    "type": "number"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/podcasts/{podcastID}/star": {
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "Authorization",
+                    "description": "isi dengan jwt token yang didapatkan dari hasil sign in, sign out atau setelah me-refresh token",
+                    "required": true,
+                    "example": "Bearer ini_adalah_token_mu",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "patch": {
+                "tags": ["Podcast"],
+                "responses": {
+                    "200": {
+                        "description": "Sukses ya",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "default": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Podcast"],
+                "responses": {
+                    "200": {
+                        "description": "Sukses ya",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "default": true
                                         }
                                     }
                                 }

@@ -91,7 +91,7 @@ func (r *repository) FindByID(ctx context.Context, podcastID int64) (models.Podc
 	return podcast, nil
 }
 
-func findNext(params *Params) string {
+func findNext(params *Params) (string, []interface{}) {
 	podcasts := strings.Builder{}
 	podcasts.WriteString(`
 		SELECT
@@ -105,6 +105,9 @@ func findNext(params *Params) string {
 		WHERE`,
 	)
 
+	dollar := 1
+	nonIntValues := make([]interface{}, 0)
+
 	// Cursor
 	cursor := params.Cursor
 	if cursor == 0 {
@@ -116,12 +119,26 @@ func findNext(params *Params) string {
 		limit = 10
 	}
 
-	fmt.Fprintf(&podcasts, " pt.id < %d ORDER BY pt.id DESC LIMIT %d ", cursor, limit)
+	fmt.Fprintf(&podcasts, " pt.id < %d ", cursor)
 
-	return podcasts.String()
+	// Dynamic query
+	if params.Title != "" {
+		fmt.Fprintf(&podcasts, " AND pt.title ILIKE $%d ", dollar)
+		nonIntValues = append(nonIntValues, "%"+params.Title+"%")
+		dollar++
+	}
+
+	if params.AuthorID != 0 {
+		fmt.Fprintf(&podcasts, " AND pt.author_id = %d ", params.AuthorID)
+	}
+
+	// Limit
+	fmt.Fprintf(&podcasts, " ORDER BY pt.id DESC LIMIT %d", limit)
+
+	return podcasts.String(), nonIntValues
 }
 
-func findPrev(params *Params) string {
+func findPrev(params *Params) (string, []interface{}) {
 	podcasts := strings.Builder{}
 	podcasts.WriteString(`
 		WITH prev_mode AS (
@@ -136,19 +153,36 @@ func findPrev(params *Params) string {
 			WHERE`,
 	)
 
+	dollar := 1
+	nonIntValues := make([]interface{}, 0)
+
 	// Cursor
 	limit := params.Limit
 	if limit == 0 {
 		limit = 10
 	}
 
-	fmt.Fprintf(&podcasts, " pt.id > %d LIMIT %d ", params.Cursor, limit)
+	fmt.Fprintf(&podcasts, " pt.id > %d ", params.Cursor)
+
+	// Dynamic query
+	if params.Title != "" {
+		fmt.Fprintf(&podcasts, " AND pt.title ILIKE $%d ", dollar)
+		nonIntValues = append(nonIntValues, "%"+params.Title+"%")
+		dollar++
+	}
+
+	if params.AuthorID != 0 {
+		fmt.Fprintf(&podcasts, " AND pt.author_id = %d ", params.AuthorID)
+	}
+
+	// Limit
+	fmt.Fprintf(&podcasts, "  LIMIT %d ", limit)
 	podcasts.WriteString(") SELECT * FROM prev_mode ORDER BY podcast_id DESC")
 
-	return podcasts.String()
+	return podcasts.String(), nonIntValues
 }
 
-func find(params *Params) string {
+func find(params *Params) (string, []interface{}) {
 	if params.Direction == "previous" {
 		return findPrev(params)
 	}
@@ -157,7 +191,8 @@ func find(params *Params) string {
 }
 
 func (r *repository) Find(ctx context.Context, params *Params) ([]models.Podcast, Cursor, error) {
-	rows, err := r.db.QueryContext(ctx, find(params))
+	query, nonIntValues := find(params)
+	rows, err := r.db.QueryContext(ctx, query, nonIntValues...)
 	if err != nil {
 		return nil, Cursor{}, err
 	}

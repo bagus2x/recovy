@@ -70,7 +70,16 @@ func (s *service) StarPodcast(ctx context.Context, req *StarPodcastReq) error {
 		return err
 	}
 
-	return s.starredPodcastRepo.Create(ctx, &models.StarredPodcast{
+	star, err := s.starredPodcastRepo.FindByPodcastIDAndUserID(ctx, req.PodcastID, req.UserID)
+	if err != nil && app.ErrorCode(err) != app.ENotFound {
+		return err
+	}
+
+	if (star != models.StarredPodcast{}) {
+		return app.NewError(nil, app.Econflict, "User has starred")
+	}
+
+	err = s.starredPodcastRepo.Create(ctx, &models.StarredPodcast{
 		Podcast: models.Podcast{
 			ID: req.PodcastID,
 		},
@@ -78,6 +87,11 @@ func (s *service) StarPodcast(ctx context.Context, req *StarPodcastReq) error {
 			ID: req.UserID,
 		},
 	})
+	if err != nil {
+		return app.NewError(err, app.ENotFound, "Podcast not found")
+	}
+
+	return nil
 }
 
 func (s *service) UnstarPodcast(ctx context.Context, req *StarPodcastReq) error {
@@ -139,7 +153,8 @@ func (s *service) GetByParams(ctx context.Context, params *Params) (GetPodcastsR
 	}
 
 	res := GetPodcastsResp{
-		Cursor: cursor,
+		Cursor:   cursor,
+		Podcasts: make([]Podcast, 0),
 	}
 
 	userID, ok := ctx.Value("userID").(int64)

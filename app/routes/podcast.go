@@ -176,7 +176,7 @@ func getPodcasts(service podcast.Service) fiber.Handler {
 
 		res, err := service.GetByParams(c.Context(), &params)
 		if err != nil {
-			log.Println(err)
+			log.Println("error nih: ", err)
 			return c.Status(app.Status(err)).JSON(app.Failure{
 				Success: false,
 				Error: app.ErrorDetail{
@@ -228,7 +228,7 @@ func getPodcastParams(query func(key string, defaultValue ...string) string) (po
 	var params podcast.Params
 
 	cursorStr := query("cursor")
-	if len(cursorStr) > 0 {
+	if cursorStr != "" {
 		cursor, err := strconv.ParseInt(cursorStr, 10, 64)
 		if err != nil {
 			return podcast.Params{}, err
@@ -237,7 +237,7 @@ func getPodcastParams(query func(key string, defaultValue ...string) string) (po
 	}
 
 	limitStr := query("limit")
-	if len(limitStr) > 0 {
+	if limitStr != "" {
 		limit, err := strconv.ParseInt(limitStr, 10, 64)
 		if err != nil {
 			return podcast.Params{}, err
@@ -245,7 +245,17 @@ func getPodcastParams(query func(key string, defaultValue ...string) string) (po
 		params.Limit = limit
 	}
 
+	authorStr := query("author_id")
+	if authorStr != "" {
+		authorID, err := strconv.ParseInt(authorStr, 10, 64)
+		if err != nil {
+			return podcast.Params{}, err
+		}
+		params.AuthorID = authorID
+	}
+
 	params.Direction = query("direction")
+	params.Title = query("title")
 
 	log.Println(cursorStr)
 	return params, nil

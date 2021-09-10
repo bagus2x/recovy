@@ -27,6 +27,8 @@ type Params struct {
 	Cursor    int64
 	Limit     int64
 	Direction string
+	Title     string
+	AuthorID  int64
 }
 
 type Cursor struct {
@@ -35,7 +37,6 @@ type Cursor struct {
 }
 
 type CreatePodcastReq struct {
-	ID          int64  `json:"id"`
 	AuthorID    int64  `json:"authorID" validate:"required"`
 	Picture     string `json:"picture" validate:"lte=512"`
 	Title       string `json:"title" validate:"required,gte=5,lte=255"`
