@@ -9,7 +9,7 @@ export REFRESH_TOKEN_KEY=test
 export ACCESS_TOKEN_LIFETIME=900
 export REFRESH_TOKEN_LIFETIME=604800
 export CACHE_SIZE=1
-
+export SSL_MODE=disable
 export POSTGRES_URI=postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable
 
 test:

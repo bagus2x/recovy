@@ -18,6 +18,7 @@ type Config struct {
 	dbName               string
 	dbUser               string
 	dbPassword           string
+	sslMode              string
 }
 
 func New() *Config {
@@ -33,6 +34,7 @@ func New() *Config {
 		dbName:               mustGetEnv("DB_NAME"),
 		dbUser:               mustGetEnv("DB_USERNAME"),
 		dbPassword:           mustGetEnv("DB_PASSWORD"),
+		sslMode:              mustGetEnv("SSL_MODE"),
 	}
 }
 
@@ -48,6 +50,7 @@ func NewTest() *Config {
 	os.Setenv("DB_USERNAME", "postgres")
 	os.Setenv("DB_PASSWORD", "admin123")
 	os.Setenv("CACHE_SIZE", "1") // MB
+	os.Setenv("SSL_MODE", "disable")
 
 	return New()
 }
@@ -93,8 +96,8 @@ func (c *Config) RefreshTokenLifetime() int {
 
 func (c *Config) DatabaseConnection() string {
 	return fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
-		c.dbHost, c.dbPort, c.dbUser, c.dbPassword, c.dbName,
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		c.dbHost, c.dbPort, c.dbUser, c.dbPassword, c.dbName, c.sslMode,
 	)
 }
 

@@ -8,6 +8,8 @@ import (
 	"github.com/bagus2x/recovy/auth"
 	"github.com/bagus2x/recovy/config"
 	"github.com/bagus2x/recovy/db"
+	"github.com/bagus2x/recovy/podcast"
+	"github.com/bagus2x/recovy/starredpodcast"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -33,12 +35,16 @@ func main() {
 
 	authRepo := auth.NewRepository(db)
 	authCacheRepo := auth.NewCacheRepository(cache, cfg)
+	podcastRepo := podcast.NewRepository(db)
+	starredPodcastRepo := starredpodcast.NewRepository(db)
 
 	authService := auth.NewService(authRepo, authCacheRepo, cfg)
+	podcastService := podcast.NewService(podcastRepo, starredPodcastRepo)
 
 	mw := middleware.NewMiddleware(authService)
 
 	routes.AuthRoutes(app, mw, authService)
+	routes.PodcastRoutes(app, mw, podcastService)
 
 	app.Listen(cfg.AppPort())
 }

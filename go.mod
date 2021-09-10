@@ -4,13 +4,13 @@ go 1.16
 
 require (
 	github.com/andybalholm/brotli v1.0.3 // indirect
-	github.com/coocood/freecache v1.1.1 // indirect
+	github.com/aws/aws-sdk-go v1.40.39
+	github.com/coocood/freecache v1.1.1
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/gofiber/fiber/v2 v2.17.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.10.2
 	github.com/stretchr/testify v1.7.0
 	github.com/valyala/fasthttp v1.29.0 // indirect
