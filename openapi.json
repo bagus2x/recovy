@@ -651,48 +651,64 @@
                                             "default": true
                                         },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "minLength": 1
-                                                    },
-                                                    "author": {
+                                            "type": "object",
+                                            "properties": {
+                                                "cursor": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "next": {
+                                                            "type": "integer"
+                                                        },
+                                                        "previous": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                },
+                                                "podcasts": {
+                                                    "type": "array",
+                                                    "items": {
                                                         "type": "object",
                                                         "properties": {
                                                             "id": {
-                                                                "type": "number"
+                                                                "type": "integer",
+                                                                "minLength": 1
                                                             },
-                                                            "name": {
-                                                                "type": "string"
+                                                            "author": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "number"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "picture": {
+                                                                        "type": "string"
+                                                                    }
+                                                                }
                                                             },
                                                             "picture": {
                                                                 "type": "string"
+                                                            },
+                                                            "title": {
+                                                                "type": "string"
+                                                            },
+                                                            "description": {
+                                                                "type": "string"
+                                                            },
+                                                            "file": {
+                                                                "type": "string"
+                                                            },
+                                                            "starred": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "createdAt": {
+                                                                "type": "number"
+                                                            },
+                                                            "updatedAt": {
+                                                                "type": "number"
                                                             }
                                                         }
-                                                    },
-                                                    "picture": {
-                                                        "type": "string"
-                                                    },
-                                                    "title": {
-                                                        "type": "string"
-                                                    },
-                                                    "description": {
-                                                        "type": "string"
-                                                    },
-                                                    "file": {
-                                                        "type": "string"
-                                                    },
-                                                    "starred": {
-                                                        "type": "boolean"
-                                                    },
-                                                    "createdAt": {
-                                                        "type": "number"
-                                                    },
-                                                    "updatedAt": {
-                                                        "type": "number"
                                                     }
                                                 }
                                             }
