@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"testing"
 	"time"
@@ -9,11 +10,10 @@ import (
 	"github.com/bagus2x/recovy/config"
 	"github.com/bagus2x/recovy/db"
 	"github.com/bagus2x/recovy/models"
-	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 )
 
-func getDbTest() *sqlx.DB {
+func getDbTest() *sql.DB {
 	cfg := config.NewTest()
 	db, err := db.OpenPostgres(cfg)
 	if err != nil {
@@ -26,9 +26,9 @@ func getDbTest() *sqlx.DB {
 func TestCreateUser(t *testing.T) {
 	repo := NewRepository(getDbTest())
 	user := models.User{
-		Name:      "bagus",
-		Email:     "bagus@gmail.com",
-		Password:  "bagus123",
+		Name:      "budi",
+		Email:     "budi@gmail.com",
+		Password:  "budi123",
 		CreatedAt: time.Now().Unix(),
 		UpdatedAt: time.Now().Unix(),
 	}
@@ -49,7 +49,7 @@ func TestFindByID(t *testing.T) {
 func TestFindByEmail(t *testing.T) {
 	repo := NewRepository(getDbTest())
 
-	user, err := repo.FindByEmail(context.Background(), "bagus@gmail.com")
+	user, err := repo.FindByEmail(context.Background(), "budi@gmail.com")
 	assert.NoError(t, err)
 	t.Log(user)
 	assert.NotZero(t, user.ID)

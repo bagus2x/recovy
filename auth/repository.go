@@ -6,7 +6,6 @@ import (
 
 	"github.com/bagus2x/recovy/app"
 	"github.com/bagus2x/recovy/models"
-	"github.com/jmoiron/sqlx"
 )
 
 type Repository interface {
@@ -16,10 +15,10 @@ type Repository interface {
 }
 
 type repository struct {
-	db *sqlx.DB
+	db *sql.DB
 }
 
-func NewRepository(db *sqlx.DB) Repository {
+func NewRepository(db *sql.DB) Repository {
 	return &repository{
 		db: db,
 	}
@@ -28,15 +27,15 @@ func NewRepository(db *sqlx.DB) Repository {
 var create = `
 	INSERT INTO 
 		App_User
-		(name, email, picture, password, created_at, updated_at, deleted_at)
+		(name, email, picture, password, created_at, updated_at)
 	VALUES
-		($1, $2, $3, $4, $5, $6, $7)
+		($1, $2, $3, $4, $5, $6)
 	RETURNING
 		id
 `
 
 func (r *repository) Create(ctx context.Context, user *models.User) error {
-	err := r.db.QueryRowxContext(
+	err := r.db.QueryRowContext(
 		ctx,
 		create,
 		user.Name,
@@ -45,7 +44,6 @@ func (r *repository) Create(ctx context.Context, user *models.User) error {
 		user.Password,
 		user.CreatedAt,
 		user.UpdatedAt,
-		user.DeletedAt,
 	).Scan(&user.ID)
 
 	return err
@@ -53,7 +51,7 @@ func (r *repository) Create(ctx context.Context, user *models.User) error {
 
 var findByID = `
 	SELECT
-		id, name, email, picture, password, created_at, updated_at, deleted_at
+		id, name, email, picture, password, created_at, updated_at
 	FROM
 		App_User
 	WHERE
@@ -63,8 +61,18 @@ var findByID = `
 func (r *repository) FindByID(ctx context.Context, userID int64) (models.User, error) {
 	var user models.User
 
-	err := r.db.GetContext(ctx, &user, findByID, userID)
-	if err != nil {
+	err := r.db.QueryRowContext(ctx, findByID, userID).Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.Picture,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err == sql.ErrNoRows {
+		return models.User{}, app.NewError(err, app.ENotFound)
+	} else if err != nil {
 		return models.User{}, err
 	}
 
@@ -73,7 +81,7 @@ func (r *repository) FindByID(ctx context.Context, userID int64) (models.User, e
 
 var findByEmail = `
 	SELECT
-		id, name, email, picture, password, created_at, updated_at, deleted_at
+		id, name, email, picture, password, created_at, updated_at
 	FROM
 		App_User
 	WHERE
@@ -83,8 +91,16 @@ var findByEmail = `
 func (r *repository) FindByEmail(ctx context.Context, email string) (models.User, error) {
 	var user models.User
 
-	err := r.db.GetContext(ctx, &user, findByEmail, email)
-	if err != nil && err == sql.ErrNoRows {
+	err := r.db.QueryRowContext(ctx, findByEmail, email).Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.Picture,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err == sql.ErrNoRows {
 		return models.User{}, app.NewError(err, app.ENotFound)
 	} else if err != nil {
 		return models.User{}, err
