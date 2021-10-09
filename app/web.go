@@ -6,7 +6,7 @@ import (
 
 type Success struct {
 	Success bool        `json:"success"`
-	Data    interface{} `json:"data"`
+	Data    interface{} `json:"data,omitempty"`
 }
 
 type Failure struct {

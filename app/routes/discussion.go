@@ -1,145 +1,136 @@
 package routes
 
 import (
+	"strconv"
+
 	"github.com/bagus2x/recovy/app"
 	"github.com/bagus2x/recovy/app/middleware"
-	"github.com/bagus2x/recovy/auth"
+	"github.com/bagus2x/recovy/discussion"
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 )
 
-func AuthRoutes(r fiber.Router, mw *middleware.Middleware, service auth.Service) {
-	v1 := r.Group("/api/v1/auth")
+func DiscussionRoutes(r fiber.Router, mw *middleware.Middleware, service discussion.Service) {
+	discussion := r.Group("/api/v1/discussion")
+	discussions := r.Group("/api/v1/discussions")
 
-	v1.Get("/", mw.Auth(), getAuthenticatedUser(service))
-	v1.Post("/signup", signUp(service))
-	v1.Post("/signin", signIn(service))
-	v1.Delete("/signout", mw.Auth(), signOut(service))
-	v1.Post("/refresh", refreshToken(service))
+	discussion.Post("/", mw.Auth(), createDiscussion(service))
+	discussion.Get("/:discussionID", getDiscussionByID(service))
+	discussion.Delete(":discussionID", mw.Auth(), deleteDiscussion(service))
+	discussions.Get("/", getDiscussions(service))
+	discussions.Get("/:category", getDiscussionsByCategory(service))
 }
 
-func getAuthenticatedUser(service auth.Service) fiber.Handler {
+func createDiscussion(service discussion.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		var req discussion.CreateDiscussionReq
+		err := c.BodyParser(&req)
+		if err != nil {
+			logrus.Error(err)
+			return c.Status(app.Status(err)).JSON(app.Failure{
+				Success: false,
+				Error: app.ErrorDetail{
+					Code:     app.EBadRequest,
+					Messages: []string{"Invalid json format"},
+				},
+			})
+		}
+
+		userID, _ := c.Locals("userID").(int64)
+		req.AuthorID = userID
+
+		res, err := service.Create(c.Context(), &req)
+		if err != nil {
+			logrus.Error(err)
+			return c.Status(app.Status(err)).JSON(app.Failure{
+				Success: false,
+				Error: app.ErrorDetail{
+					Code:     app.EBadRequest,
+					Messages: app.ErrorMessage(err),
+				},
+			})
+		}
+
+		return c.Status(200).JSON(app.Success{
+			Success: true,
+			Data:    res,
+		})
+	}
+}
+
+func getDiscussions(service discussion.Service) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		res, err := service.Get(c.Context())
+		if err != nil {
+			logrus.Error(err)
+			return c.Status(app.Status(err)).JSON(app.Failure{
+				Success: false,
+				Error: app.ErrorDetail{
+					Code:     app.EBadRequest,
+					Messages: app.ErrorMessage(err),
+				},
+			})
+		}
+
+		return c.Status(200).JSON(app.Success{
+			Success: true,
+			Data:    res,
+		})
+	}
+}
+
+func getDiscussionByID(service discussion.Service) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		discussionID, _ := strconv.ParseInt(c.Params("discussionID"), 10, 64)
+
+		res, err := service.GetByID(c.Context(), discussionID)
+		if err != nil {
+			logrus.Error(err)
+			return c.Status(app.Status(err)).JSON(app.Failure{
+				Success: false,
+				Error: app.ErrorDetail{
+					Code:     app.EBadRequest,
+					Messages: app.ErrorMessage(err),
+				},
+			})
+		}
+
+		return c.Status(200).JSON(app.Success{
+			Success: true,
+			Data:    res,
+		})
+	}
+}
+
+func getDiscussionsByCategory(service discussion.Service) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		res, err := service.GetByCategory(c.Context(), c.Params("category"))
+		if err != nil {
+			logrus.Error(err)
+			return c.Status(app.Status(err)).JSON(app.Failure{
+				Success: false,
+				Error: app.ErrorDetail{
+					Code:     app.EBadRequest,
+					Messages: app.ErrorMessage(err),
+				},
+			})
+		}
+
+		return c.Status(200).JSON(app.Success{
+			Success: true,
+			Data:    res,
+		})
+	}
+}
+
+func deleteDiscussion(service discussion.Service) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		webinarID, _ := strconv.ParseInt(c.Params("discussionID"), 10, 64)
 		userID, _ := c.Locals("userID").(int64)
 
-		res, err := service.GetUserByID(c.Context(), userID)
+		err := service.Delete(c.Context(), webinarID, userID)
 		if err != nil {
-			return c.Status(app.Status(err)).JSON(app.Failure{
-				Success: false,
-				Error: app.ErrorDetail{
-					Code:     app.EBadRequest,
-					Messages: app.ErrorMessage(err),
-				},
-			})
-		}
-
-		return c.Status(200).JSON(app.Success{
-			Success: true,
-			Data:    res,
-		})
-	}
-}
-
-func signUp(service auth.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		var req auth.SignUpReq
-		err := c.BodyParser(&req)
-		if err != nil {
-			return c.Status(app.Status(err)).JSON(app.Failure{
-				Success: false,
-				Error: app.ErrorDetail{
-					Code:     app.EBadRequest,
-					Messages: []string{"Invalid json format"},
-				},
-			})
-		}
-
-		res, err := service.SignUp(c.Context(), &req)
-		if err != nil {
-			return c.Status(app.Status(err)).JSON(app.Failure{
-				Success: false,
-				Error: app.ErrorDetail{
-					Code:     app.EBadRequest,
-					Messages: app.ErrorMessage(err),
-				},
-			})
-		}
-
-		return c.Status(200).JSON(app.Success{
-			Success: true,
-			Data:    res,
-		})
-	}
-}
-
-func signIn(service auth.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		var req auth.SignInReq
-		err := c.BodyParser(&req)
-		if err != nil {
-			return c.Status(app.Status(err)).JSON(app.Failure{
-				Success: false,
-				Error: app.ErrorDetail{
-					Code:     app.EBadRequest,
-					Messages: []string{"Invalid json format"},
-				},
-			})
-		}
-
-		res, err := service.SignIn(c.Context(), &req)
-		if err != nil {
-			return c.Status(app.Status(err)).JSON(app.Failure{
-				Success: false,
-				Error: app.ErrorDetail{
-					Code:     app.EBadRequest,
-					Messages: app.ErrorMessage(err),
-				},
-			})
-		}
-
-		return c.Status(200).JSON(app.Success{
-			Success: true,
-			Data:    res,
-		})
-	}
-}
-
-func refreshToken(service auth.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		var req auth.RefreshTokenReq
-		err := c.BodyParser(&req)
-		if err != nil {
-			return c.Status(app.Status(err)).JSON(app.Failure{
-				Success: false,
-				Error: app.ErrorDetail{
-					Code:     app.EBadRequest,
-					Messages: []string{"Invalid json format"},
-				},
-			})
-		}
-
-		res, err := service.RefreshToken(c.Context(), &req)
-		if err != nil {
-			return c.Status(app.Status(err)).JSON(app.Failure{
-				Success: false,
-				Error: app.ErrorDetail{
-					Code:     app.EBadRequest,
-					Messages: app.ErrorMessage(err),
-				},
-			})
-		}
-
-		return c.Status(200).JSON(app.Success{
-			Success: true,
-			Data:    res,
-		})
-	}
-}
-
-func signOut(service auth.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		userID, _ := c.Locals("userID").(int64)
-		err := service.SignOut(c.Context(), userID)
-		if err != nil {
+			logrus.Error(err)
 			return c.Status(app.Status(err)).JSON(app.Failure{
 				Success: false,
 				Error: app.ErrorDetail{

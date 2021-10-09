@@ -1,964 +1,2600 @@
 {
-    "openapi": "3.0.2",
-    "info": {
-        "title": "Recovy",
-        "version": "1.0"
-    },
-    "servers": [
-        {
-            "url": "https://recovy.herokuapp.com/api/v1"
-        }
-    ],
-    "paths": {
-        "/auth": {
-            "get": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Ambil user yanga terauthentikasi",
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "Authorization",
-                        "description": "isi dengan jwt token yang didapatkan dari hasil sign in, sign out atau setelah me-refresh token",
-                        "required": true,
-                        "example": "Bearer ini_adalah_token_mu",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "id": {
-                                                    "type": "number"
-                                                },
-                                                "name": {
-                                                    "type": "string"
-                                                },
-                                                "email": {
-                                                    "type": "string"
-                                                },
-                                                "pictrue": {
-                                                    "type": "string"
-                                                },
-                                                "createdAt": {
-                                                    "type": "integer"
-                                                },
-                                                "updatedAt": {
-                                                    "type": "integer"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Error: Internal",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/signup": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Buat user baru",
-                "requestBody": {
-                    "required": true,
-                    "description": "Request body berupa json",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "minimum": 5,
-                                        "maximum": 50
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "minimum": 5,
-                                        "maximum": 255
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "minimum": 5,
-                                        "maximum": 255
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "token": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "accessToken": {
-                                                            "type": "string"
-                                                        },
-                                                        "refreshToken": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                },
-                                                "user": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "number"
-                                                        },
-                                                        "name": {
-                                                            "type": "string"
-                                                        },
-                                                        "email": {
-                                                            "type": "string"
-                                                        },
-                                                        "pictrue": {
-                                                            "type": "string"
-                                                        },
-                                                        "createdAt": {
-                                                            "type": "integer"
-                                                        },
-                                                        "updatedAt": {
-                                                            "type": "integer"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Error: Internal",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/signin": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Sign in user yang terdaftar",
-                "requestBody": {
-                    "required": true,
-                    "description": "Request body berupa json",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "minimum": 5,
-                                        "maximum": 255
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "minimum": 5,
-                                        "maximum": 255
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "token": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "accessToken": {
-                                                            "type": "string"
-                                                        },
-                                                        "refreshToken": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                },
-                                                "user": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "number"
-                                                        },
-                                                        "name": {
-                                                            "type": "string"
-                                                        },
-                                                        "email": {
-                                                            "type": "string"
-                                                        },
-                                                        "pictrue": {
-                                                            "type": "string"
-                                                        },
-                                                        "createdAt": {
-                                                            "type": "integer"
-                                                        },
-                                                        "updatedAt": {
-                                                            "type": "integer"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Error: Internal",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/signout": {
-            "delete": {
-                "tags": [
-                    "Auth"
-                ],
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "Authorization",
-                        "description": "isi dengan jwt token yang didapatkan dari hasil sign in, sign out atau setelah me-refresh token",
-                        "required": true,
-                        "example": "Bearer ini_adalah_token_mu",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "summary": "Sign out user yang sudah login",
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Error: Internal",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/refresh": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Refresh token yang akan expired",
-                "requestBody": {
-                    "required": true,
-                    "description": "Request body berupa json",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "refreshToken": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "token": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "accessToken": {
-                                                            "type": "string"
-                                                        },
-                                                        "refreshToken": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                },
-                                                "userID": {
-                                                    "type": "integer"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Error: Internal",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "string"
-                                        },
-                                        "messages": {
-                                            "type": "array",
-                                            "minItems": 1,
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/podcasts": {
-            "get": {
-                "tags": ["Podcast"],
-                "summary": "Get semua data dengan menggunakan cursor based pagination",
-                "description": "Gunakan 'limit' pada header untuk mengatur jumlah item dari setiap halaman. dan gunakan 'cursor' pada header untuk berpindah halaman. Semua query string adalah opsional. kecuali jika menyertakan direction=previous maka cursor='cursor.previous' juga harus disertakan; 'cursor.previous' tersebut didapat dari response sebelumnya",
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "Authorization",
-                        "required": false,
-                        "description": "Tidak wajib. namun jika ingin mendaptakn starred yang bernilai true maka header yang valid wajib disertakan",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "cursor",
-                        "description": "cursor berguna untuk menunjuk page selanjutnya atau sebelumnya",
-                        "in": "query",
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "default": "default valuenya adalah max int32 (2147483647)"
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "description": "gunakan limit untuk membatasi maximum item",
-                        "in": "query",
-                        "schema": {
-                            "type": "number",
-                            "minimum": 0,
-                            "default": "Default value adalah 10 items"
-                        }
-                    },
-                    {
-                        "name": "direction",
-                        "description": "Wajib digunakan di url jika direction=previous",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "previous",
-                                "next"
-                            ],
-                            "default": "next"
-                        }
-                    },
-                    {
-                        "name": "author_id",
-                        "description": "Opsional. filter berdasar author_id",
-                        "in": "query",
-                        "schema": {
-                            "type": "number",
-                            "minimum": 1
-                        }
-                    },
-                    {
-                        "name": "title",
-                        "description": "Opsional. filter berdasar title. bisa menggunakan wildcard seperti: %title%",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "minimum": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "starred akan selalu bernilai false jika user belumm terauthetikasi",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "cursor": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "next": {
-                                                            "type": "integer"
-                                                        },
-                                                        "previous": {
-                                                            "type": "integer"
-                                                        }
-                                                    }
-                                                },
-                                                "podcasts": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "minLength": 1
-                                                            },
-                                                            "author": {
-                                                                "type": "object",
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "number"
-                                                                    },
-                                                                    "name": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "picture": {
-                                                                        "type": "string"
-                                                                    }
-                                                                }
-                                                            },
-                                                            "picture": {
-                                                                "type": "string"
-                                                            },
-                                                            "title": {
-                                                                "type": "string"
-                                                            },
-                                                            "description": {
-                                                                "type": "string"
-                                                            },
-                                                            "file": {
-                                                                "type": "string"
-                                                            },
-                                                            "starred": {
-                                                                "type": "boolean"
-                                                            },
-                                                            "createdAt": {
-                                                                "type": "number"
-                                                            },
-                                                            "updatedAt": {
-                                                                "type": "number"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": ["Podcast"],
-                "summary": "Buat podcast baru",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "picture": {
-                                        "type": "string",
-                                        "maximum": 512
-                                    },
-                                    "title": {
-                                        "type": "string",
-                                        "required": true,
-                                        "maximum": 128
-                                    },
-                                    "description": {
-                                        "type": "string"
-                                    },
-                                    "file": {
-                                        "type": "string",
-                                        "required": true,
-                                        "maximum": 128
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "starred akan selalu bernilai false",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "minLength": 1
-                                                },
-                                                "author": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "number"
-                                                        },
-                                                        "name": {
-                                                            "type": "string"
-                                                        },
-                                                        "picture": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                },
-                                                "picture": {
-                                                    "type": "string"
-                                                },
-                                                "title": {
-                                                    "type": "string"
-                                                },
-                                                "description": {
-                                                    "type": "string"
-                                                },
-                                                "file": {
-                                                    "type": "string"
-                                                },
-                                                "starred": {
-                                                    "type": "boolean",
-                                                    "default": false
-                                                },
-                                                "createdAt": {
-                                                    "type": "number"
-                                                },
-                                                "updatedAt": {
-                                                    "type": "number"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/podcasts/{podcastID}": {
-            "summary": "get berdasar podcastID",
-            "get": {
-                "tags": ["Podcast"],
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "podcastID",
-                        "required": true,
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    {
-                        "in": "header",
-                        "name": "Authorization",
-                        "required": false,
-                        "description": "Tidak wajib. namun jika ingin mendaptakn starred yang bernilai true maka header yang valid wajib disertakan",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "starred akan selalu bernilai false jika user belumm terauthetikasi",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "minLength": 1
-                                                },
-                                                "author": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "number"
-                                                        },
-                                                        "name": {
-                                                            "type": "string"
-                                                        },
-                                                        "picture": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                },
-                                                "picture": {
-                                                    "type": "string"
-                                                },
-                                                "title": {
-                                                    "type": "string"
-                                                },
-                                                "description": {
-                                                    "type": "string"
-                                                },
-                                                "file": {
-                                                    "type": "string"
-                                                },
-                                                "starred": {
-                                                    "type": "boolean"
-                                                },
-                                                "createdAt": {
-                                                    "type": "number"
-                                                },
-                                                "updatedAt": {
-                                                    "type": "number"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/podcasts/{podcastID}/star": {
-            "parameters": [
-                {
-                    "in": "header",
-                    "name": "Authorization",
-                    "description": "isi dengan jwt token yang didapatkan dari hasil sign in, sign out atau setelah me-refresh token",
-                    "required": true,
-                    "example": "Bearer ini_adalah_token_mu",
-                    "schema": {
-                        "type": "string"
-                    }
-                }
-            ],
-            "patch": {
-                "tags": ["Podcast"],
-                "responses": {
-                    "200": {
-                        "description": "Sukses ya",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": ["Podcast"],
-                "responses": {
-                    "200": {
-                        "description": "Sukses ya",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "default": true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Recovy",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://recovy.herokuapp.com/api/v1"
     }
+  ],
+  "paths": {
+    "/auth": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Ambil user yanga terauthentikasi",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "isi dengan jwt token yang didapatkan dari hasil sign in, sign out atau setelah me-refresh token",
+            "required": true,
+            "example": "Bearer ini_adalah_token_mu",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "pictrue": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "integer"
+                        },
+                        "updatedAt": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error: Internal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Buat user baru",
+        "requestBody": {
+          "required": true,
+          "description": "Request body berupa json",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minimum": 5,
+                    "maximum": 50
+                  },
+                  "email": {
+                    "type": "string",
+                    "minimum": 5,
+                    "maximum": 255
+                  },
+                  "password": {
+                    "type": "string",
+                    "minimum": 5,
+                    "maximum": 255
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "object",
+                          "properties": {
+                            "accessToken": {
+                              "type": "string"
+                            },
+                            "refreshToken": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "pictrue": {
+                              "type": "string"
+                            },
+                            "createdAt": {
+                              "type": "integer"
+                            },
+                            "updatedAt": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error: Internal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Sign in user yang terdaftar",
+        "requestBody": {
+          "required": true,
+          "description": "Request body berupa json",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "minimum": 5,
+                    "maximum": 255
+                  },
+                  "password": {
+                    "type": "string",
+                    "minimum": 5,
+                    "maximum": 255
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "object",
+                          "properties": {
+                            "accessToken": {
+                              "type": "string"
+                            },
+                            "refreshToken": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            },
+                            "pictrue": {
+                              "type": "string"
+                            },
+                            "createdAt": {
+                              "type": "integer"
+                            },
+                            "updatedAt": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error: Internal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signout": {
+      "delete": {
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "isi dengan jwt token yang didapatkan dari hasil sign in, sign out atau setelah me-refresh token",
+            "required": true,
+            "example": "Bearer ini_adalah_token_mu",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "summary": "Sign out user yang sudah login",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error: Internal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh token yang akan expired",
+        "requestBody": {
+          "required": true,
+          "description": "Request body berupa json",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refreshToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "object",
+                          "properties": {
+                            "accessToken": {
+                              "type": "string"
+                            },
+                            "refreshToken": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "userID": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error: Internal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcasts": {
+      "get": {
+        "tags": ["Podcast"],
+        "summary": "Get semua data dengan menggunakan cursor based pagination",
+        "description": "Gunakan 'limit' pada header untuk mengatur jumlah item dari setiap halaman. dan gunakan 'cursor' pada header untuk berpindah halaman. Semua query string adalah opsional. kecuali jika menyertakan direction=previous maka cursor='cursor.previous' juga harus disertakan; 'cursor.previous' tersebut didapat dari response sebelumnya",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": false,
+            "description": "Tidak wajib. namun jika ingin mendaptakn starred yang bernilai true maka header yang valid wajib disertakan",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "description": "cursor berguna untuk menunjuk page selanjutnya atau sebelumnya",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": "default valuenya adalah max int32 (2147483647)"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "gunakan limit untuk membatasi maximum item",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "default": "Default value adalah 10 items"
+            }
+          },
+          {
+            "name": "direction",
+            "description": "Wajib digunakan di url jika direction=previous",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["previous", "next"],
+              "default": "next"
+            }
+          },
+          {
+            "name": "author_id",
+            "description": "Opsional. filter berdasar author_id",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "title",
+            "description": "Opsional. filter berdasar title. bisa menggunakan wildcard seperti: %title%",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "starred akan selalu bernilai false jika user belumm terauthetikasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "cursor": {
+                          "type": "object",
+                          "properties": {
+                            "next": {
+                              "type": "integer"
+                            },
+                            "previous": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "podcasts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "minLength": 1
+                              },
+                              "author": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "number"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "picture": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "picture": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "file": {
+                                "type": "string"
+                              },
+                              "starred": {
+                                "type": "boolean"
+                              },
+                              "createdAt": {
+                                "type": "number"
+                              },
+                              "updatedAt": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Podcast"],
+        "summary": "Buat podcast baru",
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Wajib mencamtumkan access token pada Header dengan format \"Authorization: bearer [token] \"",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "bearer your_token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "picture": {
+                    "type": "string",
+                    "maximum": 512
+                  },
+                  "title": {
+                    "type": "string",
+            
+                    "maximum": 128
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string",
+          
+                    "maximum": 128
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "starred akan selalu bernilai false",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "minLength": 1
+                        },
+                        "author": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "picture": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "picture": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "file": {
+                          "type": "string"
+                        },
+                        "starred": {
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "createdAt": {
+                          "type": "number"
+                        },
+                        "updatedAt": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcasts/{podcastID}": {
+      "summary": "get berdasar podcastID",
+      "get": {
+        "tags": ["Podcast"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "podcastID",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": false,
+            "description": "Tidak wajib. namun jika ingin mendaptakn starred yang bernilai true maka header yang valid wajib disertakan",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "starred akan selalu bernilai false jika user belumm terauthetikasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "minLength": 1
+                        },
+                        "author": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "picture": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "picture": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "file": {
+                          "type": "string"
+                        },
+                        "starred": {
+                          "type": "boolean"
+                        },
+                        "createdAt": {
+                          "type": "number"
+                        },
+                        "updatedAt": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcasts/{podcastID}/star": {
+      "parameters": [
+        {
+          "in": "header",
+          "name": "Authorization",
+          "description": "isi dengan jwt token yang didapatkan dari hasil sign in, sign out atau setelah me-refresh token",
+          "required": true,
+          "example": "Bearer ini_adalah_token_mu",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "patch": {
+        "tags": ["Podcast"],
+        "responses": {
+          "200": {
+            "description": "Sukses ya",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Podcast"],
+        "responses": {
+          "200": {
+            "description": "Sukses ya",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webinar": {
+      "post": {
+        "tags": ["Webinar"],
+        "summary": "Membuat webinar baru",
+        "description": "Membuat webinar baru memerlukan access token dari author",
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Wajib mencamtumkan access token pada Header dengan format \"Authorization: bearer [token] \"",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "bearer your_token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "authorID": {
+                  
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "picture": {
+                   
+                    "type": "string",
+                    "maximum": 512
+                  },
+                  "title": {
+                  
+                    "type": "string",
+                    "maximum": 255
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string",
+                  
+                    "maximum": 128
+                  },
+                  "startDate": {
+                    "type": "integer",
+                  
+                    "minimum": 1
+                  },
+                  "lastDate": {
+                    "type": "integer",
+                    
+                    "minimum": 1
+                  },
+                  "time": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Jika sukses akan selalu mengembalikan object pada properti data",
+            "content": {
+              "application/json": {
+                "schema": {
+                 
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                         
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "authorID": {
+                         
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "picture": {
+                         
+                          "type": "string",
+                          "maximum": 512
+                        },
+                        "title": {
+                        
+                          "type": "string",
+                          "maximum": 255
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                 
+                          "maximum": 128
+                        },
+                        "startDate": {
+                          "type": "integer",
+                         
+                          "minimum": 1
+                        },
+                        "lastDate": {
+                          "type": "integer",
+                          
+                          "minimum": 1
+                        },
+                        "time": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "integer",
+                         
+                          "minimum": 1
+                        },
+                        "updatedAt": {
+                          "type": "integer",
+                       
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webinar/{webinarID}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "description": "ID dari webinar",
+            "required": true,
+            "name": "webinarID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": ["Webinar"],
+        "summary": "Get webinar berdasar id-nya",
+        "responses": {
+          "200": {
+            "description": "Jika sukses akan selalu mengembalikan object pada properti data",
+            "content": {
+              "application/json": {
+                "schema": {
+               
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+               
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "authorID": {
+                         
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "picture": {
+                         
+                          "type": "string",
+                          "maximum": 512
+                        },
+                        "title": {
+                         
+                          "type": "string",
+                          "maximum": 255
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                    
+                          "maximum": 128
+                        },
+                        "startDate": {
+                          "type": "integer",
+                        
+                          "minimum": 1
+                        },
+                        "lastDate": {
+                          "type": "integer",
+                      
+                          "minimum": 1
+                        },
+                        "time": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "integer",
+                       
+                          "minimum": 1
+                        },
+                        "updatedAt": {
+                          "type": "integer",
+                         
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Webinar"],
+        "summary": "Menghapus webinar",
+        "description": "Menghapus webinar memerlukan access token dari author atau pemilik. Jika menghapus item dari bukan miliknya akan mengembalikan error forbidden",
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Wajib mencamtumkan access token pada Header dengan format \"Authorization: bearer [token] \"",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "bearer your_token"
+            }
+          },
+          {
+            "required": true,
+            "description": "ID dari webinar",
+            "in": "path",
+            "name": "webinarID",
+            "schema":{
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jika sukses mengahpus, akan selalu mengembalikan properti success yang bernilai true",
+            "content": {
+              "application/json": {
+                "schema": {
+               
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webinars": {
+      "get": {
+        "tags": ["Webinar"],
+        "summary": "Mendapatkan kumpulan webinars",
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                 
+                        "properties": {
+                          "id": {
+                         
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "author": {
+                         
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "photo": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "picture": {
+                         
+                            "type": "string",
+                            "maximum": 512
+                          },
+                          "title": {
+                         
+                            "type": "string",
+                            "maximum": 255
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string",
+                   
+                            "maximum": 128
+                          },
+                          "startDate": {
+                            "type": "integer",
+                            
+                            "minimum": 1
+                          },
+                          "lastDate": {
+                            "type": "integer",
+                           
+                            "minimum": 1
+                          },
+                          "time": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                            
+                            "minimum": 1
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                            
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webinars/{category}": {
+      "get": {
+        "tags": ["Webinar"],
+        "summary": "Mendapatkan kumpulan webinars berdasarkan category",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "category",
+            "example": "health",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        
+                        "properties": {
+                          "id": {
+                          
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "author": {
+                         
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "photo": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "picture": {
+                            
+                            "type": "string",
+                            "maximum": 512
+                          },
+                          "title": {
+                         
+                            "type": "string",
+                            "maximum": 255
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string",
+                           
+                            "maximum": 128
+                          },
+                          "startDate": {
+                            "type": "integer",
+                         
+                            "minimum": 1
+                          },
+                          "lastDate": {
+                            "type": "integer",
+                          
+                            "minimum": 1
+                          },
+                          "time": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                           
+                            "minimum": 1
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                          
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/article": {
+      "post": {
+        "tags": ["Article"],
+        "summary": "Membuat article baru",
+        "description": "Membuat article baru memerlukan access token dari author",
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Wajib mencamtumkan access token pada Header dengan format \"Authorization: bearer [token] \"",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "bearer your_token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "authorID": {
+                 
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "picture": {
+                    
+                    "type": "string",
+                    "maximum": 512
+                  },
+                  "title": {
+                   
+                    "type": "string",
+                    "maximum": 255
+                  },
+                  "description": {
+                    "type": "string"
+                   
+                  },
+                  "category": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Jika sukses akan selalu mengembalikan object pada properti data",
+            "content": {
+              "application/json": {
+                "schema": {
+                 
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                         
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "authorID": {
+                         
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "picture": {
+                         
+                          "type": "string",
+                          "maximum": 512
+                        },
+                        "title": {
+                         
+                          "type": "string",
+                          "maximum": 255
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                         
+                          "maximum": 128
+                        },
+                        "createdAt": {
+                          "type": "integer",
+                         
+                          "minimum": 1
+                        },
+                        "updatedAt": {
+                          "type": "integer",
+                         
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/article/{articleID}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "description": "ID dari article",
+            "required": true,
+            "name": "webinarID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": ["Article"],
+        "summary": "Get artilce berdasar id-nya",
+        "responses": {
+          "200": {
+            "description": "Jika sukses akan selalu mengembalikan object pada properti data",
+            "content": {
+              "application/json": {
+                "schema": {
+              
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                    
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "author": {
+                       
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                      
+                            },
+                            "name": {
+                              "type": "string"
+                            
+                            },
+                            "photo": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "picture": {
+                        
+                          "type": "string",
+                          "maximum": 512
+                        },
+                        "title": {
+                         
+                          "type": "string",
+                          "maximum": 255
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                         
+                          "maximum": 128
+                        },
+                        "createdAt": {
+                          "type": "integer",
+                        
+                          "minimum": 1
+                        },
+                        "updatedAt": {
+                          "type": "integer",
+                        
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Article"],
+        "summary": "Menghapus article",
+        "description": "Menghapus article memerlukan access token dari author atau pemilik. Jika menghapus item dari bukan miliknya akan mengembalikan error forbidden",
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Wajib mencamtumkan access token pada Header dengan format \"Authorization: bearer [token] \"",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "bearer your_token"
+            }
+          },
+          {
+            "required": true,
+            "description": "ID dari article",
+            "in": "path",
+            "name": "articleID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jika sukses mengahpus, akan selalu mengembalikan properti success yang bernilai true",
+            "content": {
+              "application/json": {
+                "schema": {
+              
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/articles": {
+      "get": {
+        "tags": ["Article"],
+        "summary": "Mendapatkan kumpulan articles",
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                           
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "author": {
+                           
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              
+                              },
+                              "name": {
+                                "type": "string"
+                               
+                              },
+                              "photo": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "picture": {
+                            
+                            "type": "string",
+                            "maximum": 512
+                          },
+                          "title": {
+                   
+                            "type": "string",
+                            "maximum": 255
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string",
+                           
+                            "maximum": 128
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                          
+                            "minimum": 1
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                           
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/articles/{category}": {
+      "get": {
+        "tags": ["Article"],
+        "summary": "Mendapatkan kumpulan articles berdasarkan category",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "category",
+            "example": "health",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "author": {
+                            
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                                
+                              },
+                              "name": {
+                                "type": "string"
+                                
+                              },
+                              "photo": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "picture": {
+                            
+                            "type": "string",
+                            "maximum": 512
+                          },
+                          "title": {
+                           
+                            "type": "string",
+                            "maximum": 255
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string",
+                           
+                            "maximum": 128
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                           
+                            "minimum": 1
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                            
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discussion": {
+      "post": {
+        "tags": ["Discussion"],
+        "summary": "Membuat dicussion baru",
+        "description": "Membuat dicussion baru memerlukan access token dari author",
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Wajib mencamtumkan access token pada Header dengan format \"Authorization: bearer [token] \"",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "bearer your_token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "authorID": {
+                    
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "picture": {
+                  
+                    "type": "string",
+                    "maximum": 512
+                  },
+                  "title": {
+                    
+                    "type": "string",
+                    "maximum": 255
+                  },
+                  "description": {
+                    "type": "string"
+                    
+                  },
+                  "category": {
+                    "type": "string"
+                    
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Jika sukses akan selalu mengembalikan object pada properti data",
+            "content": {
+              "application/json": {
+                "schema": {
+                 
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                         
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "authorID": {
+                         
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "picture": {
+                       
+                          "type": "string",
+                          "maximum": 512
+                        },
+                        "title": {
+                          
+                          "type": "string",
+                          "maximum": 255
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                        
+                          "maximum": 128
+                        },
+                        "createdAt": {
+                          "type": "integer",
+                        
+                          "minimum": 1
+                        },
+                        "updatedAt": {
+                          "type": "integer",
+                         
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discussion/{discussionID}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "description": "ID dari article",
+            "required": true,
+            "name": "webinarID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": ["Discussion"],
+        "summary": "Get dicussion berdasar id-nya",
+        "responses": {
+          "200": {
+            "description": "Jika sukses akan selalu mengembalikan object pada properti data",
+            "content": {
+              "application/json": {
+                "schema": {
+            
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                         
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "author": {
+                          
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number"
+                            
+                            },
+                            "name": {
+                              "type": "string"
+                            
+                            },
+                            "photo": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "picture": {
+                      
+                          "type": "string",
+                          "maximum": 512
+                        },
+                        "title": {
+                         
+                          "type": "string",
+                          "maximum": 255
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                         
+                          "maximum": 128
+                        },
+                        "createdAt": {
+                          "type": "integer",
+                        
+                          "minimum": 1
+                        },
+                        "updatedAt": {
+                          "type": "integer",
+                        
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Discussion"],
+        "summary": "Menghapus article",
+        "description": "Menghapus article memerlukan access token dari author atau pemilik. Jika menghapus item dari bukan miliknya akan mengembalikan error forbidden",
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Wajib mencamtumkan access token pada Header dengan format \"Authorization: bearer [token] \"",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "bearer your_token"
+            }
+          },
+          {
+            "required": true,
+            "description": "ID dari article",
+            "in": "path",
+            "name": "articleID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jika sukses mengahpus, akan selalu mengembalikan properti success yang bernilai true",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discussions": {
+      "get": {
+        "tags": ["Discussion"],
+        "summary": "Mendapatkan kumpulan discussions",
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "author": {
+                            
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                                
+                              },
+                              "name": {
+                                "type": "string"
+                                
+                              },
+                              "photo": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "picture": {
+               
+                            "type": "string",
+                            "maximum": 512
+                          },
+                          "title": {
+                            
+                            "type": "string",
+                            "maximum": 255
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string",
+                            
+                            "maximum": 128
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                            
+                            "minimum": 1
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                            
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discussions/{category}": {
+      "get": {
+        "tags": ["Discussion"],
+        "summary": "Mendapatkan kumpulan discussions berdasarkan category",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "category",
+            "example": "health",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                         
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "author": {
+                     
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                          
+                              },
+                              "name": {
+                                "type": "string"
+                     
+                              },
+                              "photo": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "picture": {
+                      
+                            "type": "string",
+                            "maximum": 512
+                          },
+                          "title": {
+                        
+                            "type": "string",
+                            "maximum": 255
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string",
+                   
+                            "maximum": 128
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                      
+                            "minimum": 1
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+             
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discussion-comment": {
+      "post": {
+        "tags": ["Discussion Comment"],
+        "description": "Menambahkan comment pada discussion",
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Wajib mencamtumkan access token pada Header dengan format \"Authorization: bearer [token] \"",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "bearer your_token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+   
+                "properties": {
+                  "discussionID": {
+                    "type": "integer",
+                    "minimum": 1
+  
+                  },
+                  "description": {
+                    "type": "string"
+       
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+     
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+              
+                          "minimum": 1
+                        },
+                        "discussionID": {
+                          "type": "integer",
+                        
+                          "minimum": 1
+                        },
+                        "commentatorID": {
+                          "type": "integer",
+                     
+                          "minimum": 1
+                        },
+                        "description": {
+                          "type": "string"
+                     
+                        },
+                        "createdAt": {
+                          "type": "integer",
+                      
+                          "minimum": 1
+                        },
+                        "updatedAt": {
+                          "type": "integer",
+                         
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discussion-comment/{discussionCommentID}": {
+      "get": {
+        "tags": ["Discussion Comment"],
+        "description": "Mendapatkan komentar berdasar id",
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                        
+                          "minimum": 1
+                        },
+                        "discussionID": {
+                          "type": "integer",
+                 
+                          "minimum": 1
+                        },
+                        "commentatorID": {
+                          "type": "integer",
+                          
+                          "minimum": 1
+                        },
+                        "description": {
+                          "type": "string"
+                        
+                        },
+                        "createdAt": {
+                          "type": "integer",
+                          
+                          "minimum": 1
+                        },
+                        "updatedAt": {
+                          "type": "integer",
+                         
+                          "minimum": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Discussion Comment"],
+        "description": "Menghapus comment pada discussion",
+        "parameters": [
+          {
+            "in": "header",
+            "description": "Wajib mencamtumkan access token pada Header dengan format \"Authorization: bearer [token] \"",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "bearer your_token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discussion-comments": {
+      "get": {
+        "tags": ["Discussion Comment"],
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                          
+                            "minimum": 1
+                          },
+                          "discussionID": {
+                            "type": "integer",
+                        
+                            "minimum": 1
+                          },
+                          "commentatorID": {
+                            "type": "integer",
+                      
+                            "minimum": 1
+                          },
+                          "description": {
+                            "type": "string"
+               
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                      
+                            "minimum": 1
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                        
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discussion-comments/{discussionID}": {
+      "get": {
+        "tags": ["Discussion Comment"],
+        "description": "Mendapatkan kumpulan comments berdasarkan discussionID",
+        "parameters": [
+          {
+            "required": true,
+            "in": "path",
+            "name": "discussionID",
+            "description": "ID dari discussion. karena discussion dapat memiliki lebih dari 1 komentar maka akan mengembalikan array",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Jika sukses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                  
+                            "minimum": 1
+                          },
+                          "discussionID": {
+                            "type": "integer",
+                  
+                            "minimum": 1
+                          },
+                          "commentatorID": {
+                            "type": "integer",
+                 
+                            "minimum": 1
+                          },
+                          "description": {
+                            "type": "string"
+               
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                  
+                            "minimum": 1
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                    
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
