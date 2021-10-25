@@ -16,7 +16,7 @@ func ArticleRoutes(r fiber.Router, mw *middleware.Middleware, service article.Se
 
 	article.Post("/", mw.Auth(), createArticle(service))
 	article.Get("/:articleID", getArticleByID(service))
-	article.Get("/:articleID", mw.Auth(), deleteArticle(service))
+	article.Delete("/:articleID", mw.Auth(), deleteArticle(service))
 	articles.Get("/", getArticles(service))
 	articles.Get("/:category", getArticlesByCategory(service))
 }
